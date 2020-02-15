@@ -2,14 +2,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.michael</groupId>
   <artifactId>hBaseMiniCluster</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <inceptionYear>2008</inceptionYear>
+  <version>1.0.0</version>
+
   <properties>
     <scala.version>2.11.8</scala.version>
     <hbase.version>1.1.2</hbase.version>
     <hadoop.version>2.7.3</hadoop.version>
     <scalatest.version>3.0.4</scalatest.version>
-    <mockito.version>1.8.5</mockito.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
@@ -52,6 +52,16 @@
       <version>${hbase.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api-scala_2.11</artifactId>
+      <version>11.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.11.1</version>
+    </dependency>
   </dependencies>
   <build>
     <pluginManagement>
@@ -75,6 +85,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.19.1</version>
+          <configuration>
+            <useSystemClassLoader>false</useSystemClassLoader>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.scala-tools</groupId>

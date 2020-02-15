@@ -1,12 +1,82 @@
 package org.michael
 
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.hbase.{HBaseConfiguration, TableName}
+import org.apache.hadoop.hbase.client.{Admin, Connection, ConnectionFactory, Get, Put}
+import org.apache.hadoop.hbase.util.Bytes
+
 /**
- * Hello world!
- *
+ * Play around with HBase
  */
 object Main extends App {
-  println("Hello World!")
+
+  // execute "bash start.sh" in ~/GitHubRepositories/ToolCommands/hadoop
+
+  // call
+  // create 'myFirstTable', 'colF'
+  // in hbase shell
+
+  println("Create Configuration")
+  val hBaseConf: Configuration = HBaseConfiguration.create()
+  hBaseConf.addResource("core-site.xml")
+  hBaseConf.addResource("hdfs-site.xml")
+  hBaseConf.addResource("hbase-site.xml")
+
+  println("Create Connection")
+  val connection: Connection = ConnectionFactory.createConnection(hBaseConf)
+
+  println("Create Admin")
+  val admin: Admin = connection.getAdmin()
+
+  println("List Tables")
+  val listTables = admin.listTables()
+  listTables.foreach(println)
+
+
+  val tableName = TableName.valueOf("myFirstTable")
+  val table = connection.getTable(tableName)
+
+  val thePut: Put = new Put(Bytes.toBytes("rowkey1"))
+
+  thePut.addColumn(Bytes.toBytes("colF"),Bytes.toBytes("id1"),Bytes.toBytes("one"))
+  table.put(thePut)
+
+  val theGet: Get = new Get(Bytes.toBytes("rowkey1"))
+  val result = table.get(theGet)
+  val value = result.value()
+  println(Bytes.toString(value))
 }
+
+
+
+
+
+/*
+  val connection = ConnectionFactory.createConnection(conf)
+  val table = connection.getTable(TableName.valueOf( Bytes.toBytes("emostafa:test_table") ) )
+
+  // Put example
+  var put = new Put(Bytes.toBytes("row1"))
+  put.addColumn(Bytes.toBytes("d"), Bytes.toBytes("test_column_name"), Bytes.toBytes("test_value"))
+  put.addColumn(Bytes.toBytes("d"), Bytes.toBytes("test_column_name2"), Bytes.toBytes("test_value2"))
+  table.put(put)
+
+  // Get example
+  println("Get Example:")
+  var get = new Get(Bytes.toBytes("row1"))
+  var result = table.get(get)
+  printRow(result)
+
+  //Scan example
+  println("\nScan Example:")
+  var scan = table.getScanner(new Scan())
+  scan.asScala.foreach(result => {
+      printRow(result)
+  })
+
+  table.close()
+  connection.close()
+*/
 
 
 /*
