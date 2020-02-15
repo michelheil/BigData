@@ -5,7 +5,7 @@ import org.apache.hadoop.hbase.client.{Get, Put, Result}
 import org.apache.hadoop.hbase.util.Bytes
 import org.scalatest.{BeforeAndAfterAll, FeatureSpec}
 
-object MainTest extends FeatureSpec with BeforeAndAfterAll {
+class MainTest extends FeatureSpec with BeforeAndAfterAll {
   var utility: HBaseTestingUtility = _
   val family: Array[Byte] = "CF".getBytes
   val qualifier: Array[Byte] = "CQ".getBytes
