@@ -17,9 +17,9 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
-    <property>
-        <name>fs.default.name</name>
-        <value>hdfs://localhost:9000</value>
-        <description>The default file system URI</description>
-    </property>
+   <property>
+      <name>fs.default.name</name>
+      <value>hdfs://localhost:9000</value>
+      <description>The default file system URI</description>
+   </property>
 </configuration>

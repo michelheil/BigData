@@ -10,11 +10,14 @@ import org.apache.hadoop.hbase.util.Bytes
  */
 object Main extends App {
 
-  // execute "bash start.sh" in ~/GitHubRepositories/ToolCommands/hadoop
+  // install hadoop and HBase as written in
+  // https://computingforgeeks.com/how-to-install-apache-hadoop-hbase-on-ubuntu/
 
-  // call
+  // execute "bash start.sh" in ~/GitHubRepositories/ToolCommands/hadoop
+  // for testing with hBaseMiniCluster ensure that Hbase, local-master-backup and local-regionservers are not running
+
+  // create table through "hbase shell"
   // create 'myFirstTable', 'colF'
-  // in hbase shell
 
   println("Create Configuration")
   val hBaseConf: Configuration = HBaseConfiguration.create()
@@ -31,7 +34,6 @@ object Main extends App {
   println("List Tables")
   val listTables = admin.listTables()
   listTables.foreach(println)
-
 
   val tableName = TableName.valueOf("myFirstTable")
   val table = connection.getTable(tableName)
