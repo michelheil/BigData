@@ -9,3 +9,7 @@ https://stackoverflow.com/questions/60362149/spark-streaming-how-many-batches-ar
 This blog post describes the overall procedure on how to gracefully stop a Spark Streaming job:
 
 https://www.linkedin.com/pulse/how-shutdown-spark-streaming-job-gracefully-lan-jiang
+
+Approach for marker file for shutting down
+
+http://mkuthan.github.io/blog/2016/09/30/spark-streaming-on-yarn/
