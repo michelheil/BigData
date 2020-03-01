@@ -3,12 +3,9 @@ package org.michael.big.data.spark.hbase
 import org.apache.hadoop.hbase.spark.datasources.HBaseTableCatalog
 import org.apache.spark.sql.SparkSession
 
-case class Employee(key: String, firstName: String, lastName: String, middleName: String,
-                    addressLine: String, city: String, state: String, zipCode: String)
-
 object Main extends App {
 
-  // as pre-requisites the table 'employee' with column families 'person' and 'address should exist
+  // as pre-requisites the table 'employee' with column families 'person' and 'address' should exist
 
   def catalog =
     s"""{
