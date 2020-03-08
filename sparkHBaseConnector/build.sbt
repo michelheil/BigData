@@ -1,17 +1,13 @@
 name := "sparkHBaseConnector"
 
-version := "0.1"
+version := "0.2"
 
 scalaVersion := "2.11.7"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "2.3.2"
-libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.3.2"
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.3.2"
-
-// https://mvnrepository.com/artifact/org.apache.hbase.connectors.spark/hbase-spark
-libraryDependencies += "org.apache.hbase.connectors.spark" % "hbase-spark" % "1.0.0"
+// resolvers += Resolver.url("Hortonworks", url("https://repo.hortonworks.com/content/repositories/releases/"))
+resolvers += "Hortonworks" at "https://repo.hortonworks.com/content/repositories/releases/"
 
 // https://mvnrepository.com/artifact/com.hortonworks.shc/shc-core
-libraryDependencies += "com.hortonworks.shc" % "shc-core" % "1.1.0.3.1.0.0-78"
+libraryDependencies += "com.hortonworks.shc" % "shc-core" % "1.1.0.3.1.5.6-1"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1"
