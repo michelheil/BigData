@@ -1,0 +1,13 @@
+https://stackoverflow.com/questions/50844449/how-to-manually-commit-kafka-offsets-in-spark-structured-streaming
+
+https://gist.github.com/timvw/ddb5dfd470eb06786209e218fce5e190
+
+https://jaceklaskowski.gitbooks.io/spark-streaming/spark-streaming-streaminglisteners.html
+
+https://jaceklaskowski.gitbooks.io/spark-structured-streaming/spark-sql-streaming-StreamingQueryListener.html
+
+https://books.japila.pl/apache-spark-internals/apache-spark-internals/latest/index.html
+
+https://spark.apache.org/docs/2.4.0/structured-streaming-programming-guide.html
+
+https://spark.apache.org/docs/2.3.0/api/scala/index.html#org.apache.spark.sql.streaming.StreamingQueryListener$$QueryProgressEvent
