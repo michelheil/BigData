@@ -16,6 +16,7 @@ object ListenerBootstrap {
       .format("kafka")
       .option("kafka.bootstrap.servers", "localhost:9092")
       .option("subscribe", "testingKafkaProducer")
+      .option("failOnDataLoss", "false") // in case offsets or entire topic are getting deleted
       .load()
 
 /*
