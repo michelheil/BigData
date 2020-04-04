@@ -21,24 +21,6 @@ class ConfigLoaderTest extends AnyFeatureSpec
     }
   }
 
-  Feature("Test mergeConfig") {
-    Scenario("merge two different configuration") {
-      pending
-    }
-
-    Scenario("merge two identical configuration") {
-      pending
-    }
-
-    Scenario("merge two empty configuration") {
-      pending
-    }
-
-    Scenario("merge one non-empty with one empty configuration") {
-      pending
-    }
-  }
-
   Feature("Test getConfigFileList") {
     Scenario("No Path is given") {
       pending

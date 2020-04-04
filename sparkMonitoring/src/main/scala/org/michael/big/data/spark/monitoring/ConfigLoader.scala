@@ -32,6 +32,7 @@ trait ConfigLoader {
     }
   }
 
-  def mergeConfig(confA: Config, confB: Config): Config = confA.withFallback(confB)
-
+  private[monitoring] def mergeConfig(confA: Config, confB: Config): Config = confA.withFallback(confB)
 }
+
+
