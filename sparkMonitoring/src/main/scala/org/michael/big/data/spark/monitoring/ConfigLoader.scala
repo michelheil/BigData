@@ -6,9 +6,15 @@ import com.typesafe.config.{Config, ConfigFactory}
 trait ConfigLoader {
 
   def loadConfig(appFileList: List[File]): Config = {
-    val xs: List[Config] = appFileList.map(file => ConfigFactory.parseResources(file.getName))
-    val merged = (xs.tail :\ xs.head)(op)
-    merged
+    appFileList match {
+      case Nil => ConfigFactory.empty()
+      case _ :: Nil => appFileList.map(file => ConfigFactory.parseResources(file.getName)).head
+      case _ :: _ => {
+        val fullList: List[Config] = appFileList.map(file => ConfigFactory.parseResources(file.getName))
+        (fullList.tail :\ fullList.head)(mergeConfig)
+      }
+      case _ => ConfigFactory.empty()
+    }
   }
 
   // ensure that the folder where the conf files are located are marked as project resources
@@ -26,6 +32,6 @@ trait ConfigLoader {
     }
   }
 
-  def op(confA: Config, confB: Config): Config = confA.withFallback(confB)
+  def mergeConfig(confA: Config, confB: Config): Config = confA.withFallback(confB)
 
 }
