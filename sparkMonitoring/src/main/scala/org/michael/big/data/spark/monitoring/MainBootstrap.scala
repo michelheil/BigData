@@ -1,13 +1,10 @@
 package org.michael.big.data.spark.monitoring
 
-import com.typesafe.config.Config
-import java.io.File
-
 object MainBootstrap extends App
   with ConfigLoader {
 
-    val fileList: List[File] = getConfigFileList("/")
-    val config: Config = loadConfig(fileList)
+    // ensure that the folder where the conf files are located are marked as project resources
+    val config = loadConfigFromPath(getClass.getResource("/").getPath)
 
     println(config)
     println(config.getString("auto.offset.reset"))
