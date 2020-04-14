@@ -5,7 +5,7 @@ object Constants {
   object Spark {
     lazy val SPARK_STREAMING_BACKPRESSURE_ENABLED_CONFIG = "spark.streaming.backpressure.enabled"
     lazy val SPARK_STREAMING_KAFKA_MAXRATEPERPARTITION_CONFIG = "spark.streaming.kafka.maxRatePerPartition"
-    lazy val SPARK_STREAMING_BACKPRESSURE_PID_MINRATE = "spark.streaming.backpressure.pid.minRate"
+    lazy val SPARK_STREAMING_BACKPRESSURE_PID_MINRATE_CONFIG = "spark.streaming.backpressure.pid.minRate"
   }
 
   object Kafka {
