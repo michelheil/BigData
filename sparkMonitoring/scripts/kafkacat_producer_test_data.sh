@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-KAFKA_TOPIC=($(grep kafka.input.topic ../conf/kafka.conf | cut -d "=" -f2))
+KAFKA_TOPIC=($(grep kafka.input.topic ../src/main/resources/kafka.conf | cut -d "=" -f2))
 TEST_DATA_PATH="../../sparkTheDefinitiveGuide/data/activity-data/"
 
 for filename in ${TEST_DATA_PATH}*.json; do

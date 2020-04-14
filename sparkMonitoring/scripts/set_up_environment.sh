@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # defining parameters
-KAFKA_INPUT_TOPIC=($(grep kafka.input.topic ../conf/kafka.conf | cut -d "=" -f2))
-KAFKA_OUTPUT_TOPIC=($(grep kafka.output.topic ../conf/kafka.conf | cut -d "=" -f2))
+KAFKA_INPUT_TOPIC=($(grep kafka.input.topic ../src/main/resources/kafka.conf | cut -d "=" -f2))
+KAFKA_OUTPUT_TOPIC=($(grep kafka.output.topic ../src/main/resources/kafka.conf | cut -d "=" -f2))
 
 # starting Zookeeper and Kafka
 cd /home/michael/kafka/current
