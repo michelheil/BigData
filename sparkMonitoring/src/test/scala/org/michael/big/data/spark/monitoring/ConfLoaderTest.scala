@@ -5,9 +5,9 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.GivenWhenThen
 import org.scalatest.featurespec.AnyFeatureSpec
 
-class ConfigLoaderTest extends AnyFeatureSpec
+class ConfLoaderTest extends AnyFeatureSpec
   with GivenWhenThen
-  with ConfigLoader {
+  with ConfLoader {
 
   Feature("Test loadConfigFromPath") {
     Scenario("Load all conf files that are available in Test Resources") {

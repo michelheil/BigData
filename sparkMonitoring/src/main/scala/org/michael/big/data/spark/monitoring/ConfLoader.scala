@@ -3,7 +3,7 @@ package org.michael.big.data.spark.monitoring
 import java.io.File
 import com.typesafe.config.{Config, ConfigFactory}
 
-trait ConfigLoader {
+trait ConfLoader {
 
   def loadConfigFromPath(resourceFilePath: String): Config = {
 

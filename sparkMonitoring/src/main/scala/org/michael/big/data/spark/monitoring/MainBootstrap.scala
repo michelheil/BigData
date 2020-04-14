@@ -4,40 +4,34 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.streaming.Trigger
 
 object MainBootstrap extends App
-  with ConfigLoader {
+  with ConfLoader {
 
-    // ensure that the folder where the conf files are located are marked as project resources
-    val config = loadConfigFromPath(getClass.getResource("/").getPath)
+  // ensure that the folder where the conf files are located are marked as project resources
+  val conf = loadConfigFromPath(getClass.getResource("/").getPath)
 
-    println(config)
-    println(config.getString("auto.offset.reset"))
-    println(config.getString("spark.streaming.backpressure.enabled"))
-    println(config.getString("spark.app.master"))
-    println(config.getObject("spark.streaming").toString)
+  // create SparkStreaming Job that writes from Kafka to Kafka (use Direct API)
+  val spark = SparkSession.builder()
+    .master(conf.getString("spark.app.master"))
+    .appName(conf.getString("spark.app.name"))
+    .config(Const.SparkStreamConf.BACKPRESSURE_ENABLED, conf.getString(Const.SparkStreamConf.BACKPRESSURE_ENABLED))
+    .config(Const.SparkStreamConf.KAFKA_MAXRATEPERPARTITION, conf.getString(Const.SparkStreamConf.KAFKA_MAXRATEPERPARTITION))
+    .config(Const.SparkStreamConf.BACKPRESSURE_PID_MINRATE, conf.getString(Const.SparkStreamConf.BACKPRESSURE_PID_MINRATE))
+    .getOrCreate()
 
-    // create SparkStreaming Job that writes from Kafka to Kafka (use Direct API)
-    val spark = SparkSession.builder()
-      .master(config.getString("spark.app.master"))
-      .appName(config.getString("spark.app.name"))
-      .config(Constants.Spark.SPARK_STREAMING_BACKPRESSURE_ENABLED_CONFIG, config.getString(Constants.Spark.SPARK_STREAMING_BACKPRESSURE_ENABLED_CONFIG))
-      .config(Constants.Spark.SPARK_STREAMING_KAFKA_MAXRATEPERPARTITION_CONFIG, config.getString(Constants.Spark.SPARK_STREAMING_KAFKA_MAXRATEPERPARTITION_CONFIG))
-      .config(Constants.Spark.SPARK_STREAMING_BACKPRESSURE_PID_MINRATE_CONFIG, config.getString(Constants.Spark.SPARK_STREAMING_BACKPRESSURE_PID_MINRATE_CONFIG))
-      .getOrCreate()
+  val ds1 = spark.readStream
+    .format("kafka")
+    .option(Const.KafkaConf.KAFKA_BOOTSTRAP_SERVERS, conf.getString(Const.KafkaConf.KAFKA_BOOTSTRAP_SERVERS))
+    .option("subscribe", conf.getString("kafka.input.topic"))
+    .load()
 
-    val ds1 = spark.readStream
-      .format("kafka")
-      .option(Constants.Kafka.KAFKA_BOOTSTRAP_SERVERS_CONFIG, config.getString(Constants.Kafka.KAFKA_BOOTSTRAP_SERVERS_CONFIG))
-      .option("subscribe", config.getString("kafka.input.topic"))
-      .load()
+  val ds2 = ds1.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
+    .writeStream
+    .trigger(Trigger.ProcessingTime("10 seconds"))
+    .format("kafka")
+    .option("checkpointLocation", conf.getString("spark.app.checkpoint.location.dir"))
+    .option(Const.KafkaConf.KAFKA_BOOTSTRAP_SERVERS, conf.getString(Const.KafkaConf.KAFKA_BOOTSTRAP_SERVERS))
+    .option("topic", conf.getString("kafka.output.topic"))
+    .start()
 
-    val ds2 = ds1.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
-      .writeStream
-      .trigger(Trigger.ProcessingTime("10 seconds"))
-      .format("kafka")
-      .option("checkpointLocation", config.getString("spark.app.checkpoint.location.dir"))
-      .option(Constants.Kafka.KAFKA_BOOTSTRAP_SERVERS_CONFIG, config.getString(Constants.Kafka.KAFKA_BOOTSTRAP_SERVERS_CONFIG))
-      .option("topic", config.getString("kafka.output.topic"))
-      .start()
-
-    spark.streams.awaitAnyTermination()
+  spark.streams.awaitAnyTermination()
 }
