@@ -1,9 +1,12 @@
 package org.michael.big.data.spark.checkpointing
 
+import java.util.Properties
+
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.clients.producer.{Callback, KafkaProducer, ProducerRecord, RecordMetadata}
+import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.streaming.dstream.{DStream, InputDStream}
+import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010._
@@ -11,65 +14,108 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object Main extends App {
 
+  // KafkaInput
   // Kafka Params
   val kafkaParams = Map[String, Object](
     "bootstrap.servers" -> "localhost:9092",
     "group.id" -> "CheckpointGroupId1337",
     "key.deserializer" -> classOf[StringDeserializer],
     "value.deserializer" -> classOf[StringDeserializer],
-    "auto.offset.reset" -> "earliest",
+    "auto.offset.reset" -> "latest",
     "enable.auto.commit" -> "false"
   )
 
-  val topicString = "myTestTopicCheck"
+  // KafkaOutput
+  val stringSerializerName: String = classOf[StringSerializer].getName
+
+  // KafkaOutput
+  val kafkaProducerProps: Properties = new Properties()
+  kafkaProducerProps.put("bootstrap.servers", "localhost:9092")
+  kafkaProducerProps.put("key.serializer", stringSerializerName)
+  kafkaProducerProps.put("value.serializer", stringSerializerName)
+  kafkaProducerProps.put("acks", "1")
+  kafkaProducerProps.put("compression.type", "none")
+  println(kafkaProducerProps)
+
+  // Configuration
+  val topicString = "myInputTopic"
+
+  // Main
   val topics: Array[String] = Array(topicString)
 
+  // Main
   // create Spark Session
   val spark: SparkSession = SparkSession.builder()
-    .appName("CheckpointNumRecordException")
+    .appName("NumRecordException")
     .master("local[*]")
+    .config("spark.streaming.backpressure.enabled", "true")
+    .config("spark.streaming.kafka.maxRatePerPartition", 10000)
+    .config("spark.streaming.backpressure.pid.minRate", 100)
     .getOrCreate()
 
-  // create Kafka stream
-  def functionToCreateContext(): StreamingContext = {
-    val ssc = new StreamingContext(spark.sparkContext, Seconds(10L))   // new context
-
-    val stream: InputDStream[ConsumerRecord[String, String]] = KafkaUtils.createDirectStream[String, String](ssc, PreferConsistent, Subscribe[String, String](topics, kafkaParams))
-/*
-    val keyValueDStream: DStream[(String, String)] = stream.map(cr => (cr.key(), cr.value()))
-    val keyUpdateDStream: DStream[(String, String)] = keyValueDStream.updateStateByKey(updateFunction _)
-
-    keyUpdateDStream.foreachRDD(rdd => {
-      rdd.foreachPartition(it =>
-        it.foreach(println))
+  // KafkaOutput
+  // function von Iterator[ConsumerRecord[String, String]] => Unit
+  def sendAsyncToKafka(iterator: Iterator[ConsumerRecord[String, String]]): Unit = {
+    val producer = new KafkaProducer[String, String](kafkaProducerProps)
+    iterator.foreach(record => {
+        producer.send(new ProducerRecord[String, String]("myOutputTopic", record.key, record.value), new ProducerCallback)
+        //println(record)
     })
-*/
-    // commit offsets to Kafka
-    stream.foreachRDD { rdd =>
-      val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
-      rdd.foreachPartition(it =>
-        it.foreach(println))
+    producer.flush()
+    producer.close()
+  }
+
+  // KafkaInput
+  // create Kafka stream
+  val ssc: StreamingContext = new StreamingContext(spark.sparkContext, Seconds(5L))
+
+  val stream: InputDStream[ConsumerRecord[String, String]] = KafkaUtils
+    .createDirectStream[String, String](
+      ssc,
+      PreferConsistent,
+      Subscribe[String, String](topics, kafkaParams))
+
+  // commit offsets to Kafka
+  stream.foreachRDD(rdd => {
+    if(!rdd.isEmpty()) {
+      val offsetRanges: Array[OffsetRange] = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+
+      // process data
+      rdd.foreachPartition(sendAsyncToKafka)
+
       stream.asInstanceOf[CanCommitOffsets].commitAsync(offsetRanges)
+    } else {
+      println("No RDD received. Nothing to process.")
     }
+  })
 
-    ssc.checkpoint("/home/michael/sparkCheckpoint")   // set checkpoint directory
-    ssc
-  }
-  val context = StreamingContext.getOrCreate("/home/michael/sparkCheckpoint", functionToCreateContext _)
-
+  // Main
   // start streaming context and wait for termination
-  context.start()
-  context.awaitTermination()
+  ssc.start()
+  ssc.awaitTermination()
 
-  // update function that is used in the updateStateByKey
-  // values: contains the values of a key in the current batch (may be empty)
-  // state: is an optional state object. It might be missing if there was no previous state for the key
-  def updateFunction(values: Seq[String], state: Option[String]): Option[String] = {
-    state match {
-      case Some(x) if !values.isEmpty & !values.contains(x) => Some(values(values.size-1))
-      case Some(x) => Some(x)
-      case None => None
+
+  // eigene Klasse mit selfType! zum Trait KafkaOutput
+  // KafkaOutput
+  // https://kafka.apache.org/0100/javadoc/org/apache/kafka/clients/producer/Callback.html
+  // exception - The exception thrown during processing of this record.
+  //
+  // Null if no error occurred. Possible thrown exceptions include:
+  // Non-Retriable exceptions (fatal, the message will never be sent):
+  // InvalidTopicException OffsetMetadataTooLargeException RecordBatchTooLargeException RecordTooLargeException UnknownServerException
+  //
+  // Retriable exceptions (transient, may be covered by increasing #.retries):
+  // CorruptRecordException InvalidMetadataException NotEnoughReplicasAfterAppendException NotEnoughReplicasException OffsetOutOfRangeException TimeoutException UnknownTopicOrPartitionException
+  private class ProducerCallback extends Callback {
+    @Override
+    override def onCompletion(metadata: RecordMetadata, exception: Exception): Unit = {
+      if(exception != null) {
+        exception.printStackTrace()
+      }
     }
   }
+
 
 }
+
+
