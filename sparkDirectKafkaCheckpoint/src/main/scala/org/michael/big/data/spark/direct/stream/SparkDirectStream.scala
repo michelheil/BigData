@@ -1,14 +1,14 @@
 package org.michael.big.data.spark.direct.stream
 
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream.InputDStream
-import org.apache.spark.streaming.kafka010.{CanCommitOffsets, HasOffsetRanges, OffsetRange}
 
-abstract class SparkDirectStream[T<: ConsumerRecord[String, String]] extends App {
+abstract class SparkDirectStream extends App {
 
   this: ConfLoader =>
+
+  type streamInput
 
   // create Spark Session
   lazy val spark: SparkSession = SparkSession.builder()
@@ -20,9 +20,9 @@ abstract class SparkDirectStream[T<: ConsumerRecord[String, String]] extends App
   val ssc: StreamingContext
 
   // create Input Stream
-  val stream: InputDStream[T]
+  val stream: InputDStream[streamInput]
 
   // process DStream
-  val processRDD: Iterator[T] => Unit
+  val processRDD: Iterator[streamInput] => Unit
 
 }

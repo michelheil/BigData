@@ -8,13 +8,20 @@ import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010._
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
-object Main extends SparkDirectStream[ConsumerRecord[String, String]]
+object Main extends SparkDirectStream
   with KafkaInput
   with KafkaOutput
   with ConfLoader {
 
-  // Configuration
+  // load configuration
   override val conf: Config = loadConfigFromPath(getClass.getResource("/").getPath)
+
+  // define application specific input type
+  type KafkaInKey = String
+  type KafkaInValue = String
+  type KafkaOutKey = String
+  type KafkaOutValue = String
+  type streamInput = ConsumerRecord[KafkaInKey, KafkaInValue]
 
   // define application specific logic to process RDDs
   override val processRDD = sendAsyncToKafka _
@@ -27,11 +34,11 @@ object Main extends SparkDirectStream[ConsumerRecord[String, String]]
   // create Kafka stream
   val ssc: StreamingContext = new StreamingContext(spark.sparkContext, Seconds(conf.getString("spark.batch.duration").toLong))
 
-  val stream: InputDStream[ConsumerRecord[String, String]] = KafkaUtils
-    .createDirectStream[String, String](
+  val stream: InputDStream[streamInput] = KafkaUtils
+    .createDirectStream[KafkaInKey, KafkaInValue](
       ssc,
       PreferConsistent,
-      Subscribe[String, String](inputTopic, kafkaParams))
+      Subscribe[KafkaInKey, KafkaInValue](inputTopic, kafkaParams))
 
   // commit offsets to Kafka
   stream.foreachRDD(rdd => {
