@@ -20,6 +20,7 @@ object MainBootstrap extends App
     .format("kafka")
     .option(Const.KafkaConf.KAFKA_BOOTSTRAP_SERVERS, conf.getString(Const.KafkaConf.KAFKA_BOOTSTRAP_SERVERS))
     .option("subscribe", conf.getString("kafka.input.topic"))
+    .option("startingOffsets", "earliest")
     .option("failOnDataLoss", "false")
     .load()
 
