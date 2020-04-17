@@ -23,3 +23,6 @@ libraryDependencies += "com.typesafe" % "config" % "1.3.4"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
+
+// https://mvnrepository.com/artifact/org.json4s/json4s-native
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7"
