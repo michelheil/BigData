@@ -20,12 +20,12 @@ trait ApplicationProcessor extends KafkaOutput with ConfLoader {
   implicit val formats = DefaultFormats
 
   // Asynchronous Producer of KafkaInput data
-  def appProcessRDD(iterator: Iterator[ConsumerRecord[KafkaInKey, KafkaInValue]]): Unit = {
+  def appProcessRDDPartition(iterator: Iterator[ConsumerRecord[KafkaInKey, KafkaInValue]]): Unit = {
     iterator.foreach(record => {
       println(s"""Processing record ${record}""")
       val js: KafkaInValue = record.value()
       val parsedValue: InputData = parse(js.asInstanceOf[String]).extract[InputData]
-      producer.send(new ProducerRecord[KafkaOutKey, KafkaOutValue](conf.getString("output.topic"), parsedValue.Arrival_Time, record.value), new ProducerCallback)
+      producer.send(new ProducerRecord[KafkaOutKey, KafkaOutValue](outputTopic, parsedValue.Arrival_Time, record.value), new ProducerCallback)
     })
     producer.flush()
   }

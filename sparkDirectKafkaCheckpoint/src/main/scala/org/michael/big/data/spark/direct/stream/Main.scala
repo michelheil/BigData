@@ -1,10 +1,7 @@
 package org.michael.big.data.spark.direct.stream
 
 import org.apache.spark.streaming.dstream.InputDStream
-import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
-import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010._
-import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.michael.big.data.spark.direct.stream.app.ApplicationProcessor
 import org.michael.big.data.spark.direct.stream.conf.ConfLoader
 import org.michael.big.data.spark.direct.stream.infra.{KafkaInput, KafkaOutput, SparkDirectStream}
@@ -19,7 +16,7 @@ object Main extends SparkDirectStream
   override val conf = loadConfigFromPath(getClass.getResource("/").getPath)
 
   // create overall processor for RDD stream
-  override val processRDD = appProcessRDD _
+  override val processRDDPartition = appProcessRDDPartition _
 
   // add application specific Spark configurations
   spark.conf.set("spark.streaming.backpressure.enabled", conf.getString("spark.streaming.backpressure.enabled"))
@@ -27,13 +24,7 @@ object Main extends SparkDirectStream
   spark.conf.set("spark.streaming.backpressure.pid.minRate", conf.getString("spark.streaming.backpressure.pid.minRate"))
 
   // create Spark stream reading from Kafka topic
-  override val ssc: StreamingContext = new StreamingContext(spark.sparkContext, Seconds(conf.getString("spark.batch.duration").toLong))
-
-  override val stream: InputDStream[streamInput] = KafkaUtils
-    .createDirectStream[KafkaInKey, KafkaInValue](
-      ssc,
-      PreferConsistent,
-      Subscribe[KafkaInKey, KafkaInValue](inputTopic, kafkaParams))
+  override val stream: InputDStream[streamInput] = createKafkaInputStream[KafkaInKey, KafkaInValue](ssc)
 
   // commit offsets to Kafka
   stream.foreachRDD(rdd => {
@@ -41,7 +32,7 @@ object Main extends SparkDirectStream
       val offsetRanges: Array[OffsetRange] = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
 
       // process data
-      rdd.foreachPartition(processRDD)
+      rdd.foreachPartition(processRDDPartition)
 
       stream.asInstanceOf[CanCommitOffsets].commitAsync(offsetRanges)
     } else {

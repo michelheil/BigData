@@ -13,6 +13,8 @@ trait KafkaOutput {
   type KafkaOutKey
   type KafkaOutValue
 
+  lazy val outputTopic = conf.getString("app.output.topic")
+
   val stringSerializerName: String = classOf[StringSerializer].getName
   val longSerializerName: String = classOf[LongSerializer].getName
 
