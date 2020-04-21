@@ -1,6 +1,7 @@
-package org.michael.big.data.spark.direct.stream
+package org.michael.big.data.spark.direct.stream.infra
 
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.michael.big.data.spark.direct.stream.conf.ConfLoader
 import scala.collection.immutable.HashMap
 
 trait KafkaInput {

@@ -1,40 +1,35 @@
 package org.michael.big.data.spark.direct.stream
 
-import com.typesafe.config.Config
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010._
 import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.michael.big.data.spark.direct.stream.app.ApplicationProcessor
+import org.michael.big.data.spark.direct.stream.conf.ConfLoader
+import org.michael.big.data.spark.direct.stream.infra.{KafkaInput, KafkaOutput, SparkDirectStream}
 
 object Main extends SparkDirectStream
+  with ApplicationProcessor
   with KafkaInput
   with KafkaOutput
   with ConfLoader {
 
   // load configuration
-  override val conf: Config = loadConfigFromPath(getClass.getResource("/").getPath)
+  override val conf = loadConfigFromPath(getClass.getResource("/").getPath)
 
-  // define application specific input type
-  type KafkaInKey = String
-  type KafkaInValue = String
-  type KafkaOutKey = String
-  type KafkaOutValue = String
-  type streamInput = ConsumerRecord[KafkaInKey, KafkaInValue]
-
-  // define application specific logic to process RDDs
-  override val processRDD = sendAsyncToKafka _
+  // create overall processor for RDD stream
+  override val processRDD = appProcessRDD _
 
   // add application specific Spark configurations
   spark.conf.set("spark.streaming.backpressure.enabled", conf.getString("spark.streaming.backpressure.enabled"))
   spark.conf.set("spark.streaming.kafka.maxRatePerPartition", conf.getString("spark.streaming.kafka.maxRatePerPartition"))
   spark.conf.set("spark.streaming.backpressure.pid.minRate", conf.getString("spark.streaming.backpressure.pid.minRate"))
 
-  // create Kafka stream
-  val ssc: StreamingContext = new StreamingContext(spark.sparkContext, Seconds(conf.getString("spark.batch.duration").toLong))
+  // create Spark stream reading from Kafka topic
+  override val ssc: StreamingContext = new StreamingContext(spark.sparkContext, Seconds(conf.getString("spark.batch.duration").toLong))
 
-  val stream: InputDStream[streamInput] = KafkaUtils
+  override val stream: InputDStream[streamInput] = KafkaUtils
     .createDirectStream[KafkaInKey, KafkaInValue](
       ssc,
       PreferConsistent,

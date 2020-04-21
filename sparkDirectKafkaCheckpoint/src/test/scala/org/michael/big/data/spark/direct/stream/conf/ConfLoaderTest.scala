@@ -1,4 +1,4 @@
-package org.michael.big.data.spark.direct.stream
+package org.michael.big.data.spark.direct.stream.conf
 
 import java.io.File
 

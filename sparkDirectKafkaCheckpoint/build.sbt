@@ -26,3 +26,6 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
 
 // https://mvnrepository.com/artifact/org.json4s/json4s-native
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7"
+
+// https://mvnrepository.com/artifact/org.scala-lang.modules/scala-xml
+libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.3.0"

@@ -1,8 +1,9 @@
-package org.michael.big.data.spark.direct.stream
+package org.michael.big.data.spark.direct.stream.infra
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream.InputDStream
+import org.michael.big.data.spark.direct.stream.conf.ConfLoader
 
 abstract class SparkDirectStream extends App {
 
