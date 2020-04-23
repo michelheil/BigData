@@ -22,3 +22,10 @@ echo "Creating topic ${KAFKA_OUTPUT_TOPIC}"
 bash ./kafka/current/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic ${KAFKA_OUTPUT_TOPIC}
 
 
+#sudo su - hadoop
+#start-dfs.sh
+#start-yarn.sh
+#start-hbase.sh
+#local-master-backup.sh start 2
+#local-regionservers.sh start 3
+
