@@ -19,6 +19,7 @@ object Main extends SparkDirectStream
   override val processRDDPartition = appProcessRDDPartition _
 
   // add application specific Spark configurations
+  spark.conf.set("spark.serializer", conf.getString("spark.serializer"))
   spark.conf.set("spark.streaming.backpressure.enabled", conf.getString("spark.streaming.backpressure.enabled"))
   spark.conf.set("spark.streaming.kafka.maxRatePerPartition", conf.getString("spark.streaming.kafka.maxRatePerPartition"))
   spark.conf.set("spark.streaming.backpressure.pid.minRate", conf.getString("spark.streaming.backpressure.pid.minRate"))
