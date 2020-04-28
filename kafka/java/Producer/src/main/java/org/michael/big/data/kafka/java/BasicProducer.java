@@ -4,6 +4,7 @@ import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 public class BasicProducer {
@@ -35,6 +36,7 @@ public class BasicProducer {
             final String key = "key-" + i;
             final String value = "value-" + i;
             final ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, key, value);
+            record.headers().add(new RecordHeader("type", "record_created".getBytes()));
             producer.send(record);
         }
     }

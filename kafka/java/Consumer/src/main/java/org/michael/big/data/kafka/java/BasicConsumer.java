@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 public class BasicConsumer {
@@ -19,7 +20,7 @@ public class BasicConsumer {
         // Define Kafka Parameters
         Properties settings = new Properties();
         settings.put(ConsumerConfig.GROUP_ID_CONFIG, "basic-consumer");
-        settings.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
+        settings.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         settings.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         settings.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         settings.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -31,8 +32,11 @@ public class BasicConsumer {
             consumer.subscribe(Arrays.asList(topic));
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                for (ConsumerRecord<String, String> record : records)
+                for (ConsumerRecord<String, String> record : records) {
                     System.out.printf("offset = %d, key = %s, value = %s\n", record.offset(), record.key(), record.value());
+                    String headersString = new String(record.headers().lastHeader("type").value());
+                    System.out.printf("Header value for key type = %s\n", headersString);
+                }
             }
         }
     }
