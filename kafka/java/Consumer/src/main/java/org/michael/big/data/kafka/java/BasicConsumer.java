@@ -1,4 +1,6 @@
+/*
 package org.michael.big.data.kafka.java;
+
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -7,7 +9,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 public class BasicConsumer {
@@ -41,3 +42,4 @@ public class BasicConsumer {
         }
     }
 }
+*/
