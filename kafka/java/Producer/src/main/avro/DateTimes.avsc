@@ -1,0 +1,13 @@
+{"namespace": "org.michael.big.data.kafka.java",
+ "type": "record",
+ "name": "DateTimes",
+ "fields": [
+   {"name": "RawInt", "type": "int"},
+   {"name": "RawLong", "type": "long"},
+   {"name": "Date", "type": "int", "logicalType": "date", "doc": "A date logical type annotates an Avro int, where the int stores the number of days from the unix epoch, 1 January 1970 (ISO calendar)."},
+   {"name": "TimeMilli", "type": "int", "logicalType": "time-millis", "doc": "A time-millis logical type annotates an Avro int, where the int stores the number of milliseconds after midnight, 00:00:00.000."},
+   {"name": "TimeMicro", "type": "long", "logicalType": "time-micros", "doc": "A time-micros logical type annotates an Avro long, where the long stores the number of microseconds after midnight, 00:00:00.000000."},
+   {"name": "TimestampMilli", "type": "long", "logicalType": "timestamp-millis", "doc": "A timestamp-millis logical type annotates an Avro long, where the long stores the number of milliseconds from the unix epoch, 1 January 1970 00:00:00.000 UTC."},
+   {"name": "TimestampMicro", "type": "long", "logicalType": "timestamp-micros", "doc": "A timestamp-micros logical type annotates an Avro long, where the long stores the number of microseconds from the unix epoch, 1 January 1970 00:00:00.000000 UTC."}
+ ]
+}
