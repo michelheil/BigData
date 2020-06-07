@@ -1,8 +1,14 @@
 https://docs.confluent.io/current/connect/devguide.html
 https://www.confluent.io/blog/create-dynamic-kafka-connect-source-connectors/
 
+
+https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/#json-topics
+
+
 https://hackernoon.com/writing-your-own-sink-connector-for-your-kafka-stack-fa7a7bc201ea
 
 Examples:
 https://github.com/tayalnishu/kafka-connect-hbase
 https://github.com/ibm-messaging/kafka-connect-mq-sink
+https://github.com/skynyrd/kafka-connect-elastic-sink
+

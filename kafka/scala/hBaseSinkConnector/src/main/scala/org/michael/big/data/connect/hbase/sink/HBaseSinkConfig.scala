@@ -1,42 +1,35 @@
 package org.michael.big.data.connect.hbase.sink
 
 import org.apache.kafka.common.config.{AbstractConfig, ConfigDef}
-/*
-class HBaseSinkConfig(definition: ConfigDef,
-                      originals: java.util.Map[_, _])
-  extends AbstractConfig(definition, originals) {
 
-  val TOPIC_NAME: String = "topic"
-  val TOPIC_NAME_DEFAULT: String = "defaultTopic"
-  val TOPIC_NAME_DOC: String = "Name of Kafka topic to source data"
-  val TABLE_NAME: String = "hbase.table.name"
-  val TABLE_NAME_DEFAULT: String = "defaultTable"
-  val TABLE_NAME_DOC: String = "Name of HBase table to sink dat"
-  val HBASE_COLUMN_FAMILY_DEFAULT = "d"
+class HBaseSinkConfig(definition: ConfigDef, originals: java.util.Map[_, _])
+  extends AbstractConfig(definition, originals) {}
 
-  def config(): ConfigDef = {
-    new ConfigDef()
-      .define(TOPIC_NAME, ConfigDef.Type.STRING, TOPIC_NAME_DEFAULT, ConfigDef.Importance.HIGH, TOPIC_NAME_DOC)
-      .define(TABLE_NAME, ConfigDef.Type.STRING, TABLE_NAME_DEFAULT, ConfigDef.Importance.HIGH, TABLE_NAME_DOC)
-  }
-
-}
-*/
-
+// contains "static" Java class members
 object HBaseSinkConfig {
 
-  val TOPIC_NAME: String = "topics"
-  val TOPIC_NAME_DEFAULT: String = "defaultTopic"
-  val TOPIC_NAME_DOC: String = "Name of Kafka topic(s) to source data"
-  val TABLE_NAME: String = "hbase.table.name"
-  val TABLE_NAME_DEFAULT: String = "defaultTable"
-  val TABLE_NAME_DOC: String = "Name of HBase table to sink dat"
-  val HBASE_COLUMN_FAMILY_DEFAULT = "d"
+  val TOPIC_NAME_CONFIG = "topics"
+  val TOPIC_NAME_DEFAULT = "defaultTopic"
+  val TOPIC_NAME_DOC = "Name of Kafka topic(s) to source data"
+
+  val TABLE_NAME_CONFIG = "hbase.table.name"
+  val TABLE_NAME_DEFAULT = "defaultTable"
+  val TABLE_NAME_DOC = "Name of HBase table to sink data"
+
+  val COLUMN_FAMILY_CONFIG = "hbase.column.family"
+  val COLUMN_FAMILY_DEFAULT = "d"
+  val COLUMN_FAMILY_DOC = "Name of the HBase column family where data is written into"
+
+  val COLUMN_QUALIFIER_CONFIG = "hbase.column.qualifier"
+  val COLUMN_QUALIFIER_DEFAULT = "col"
+  val COLUMN_QUALIFIER_DOC = "Name of the HBase column where data is written into"
 
   def config(): ConfigDef = {
     new ConfigDef()
-      .define(TOPIC_NAME, ConfigDef.Type.STRING, TOPIC_NAME_DEFAULT, ConfigDef.Importance.HIGH, TOPIC_NAME_DOC)
-      .define(TABLE_NAME, ConfigDef.Type.STRING, TABLE_NAME_DEFAULT, ConfigDef.Importance.HIGH, TABLE_NAME_DOC)
+      .define(TOPIC_NAME_CONFIG, ConfigDef.Type.STRING, TOPIC_NAME_DEFAULT, ConfigDef.Importance.HIGH, TOPIC_NAME_DOC)
+      .define(TABLE_NAME_CONFIG, ConfigDef.Type.STRING, TABLE_NAME_DEFAULT, ConfigDef.Importance.HIGH, TABLE_NAME_DOC)
+      .define(COLUMN_FAMILY_CONFIG, ConfigDef.Type.STRING, COLUMN_FAMILY_DEFAULT, ConfigDef.Importance.HIGH, COLUMN_FAMILY_DOC)
+      .define(COLUMN_QUALIFIER_CONFIG, ConfigDef.Type.STRING, COLUMN_QUALIFIER_DEFAULT, ConfigDef.Importance.HIGH, COLUMN_QUALIFIER_DOC)
   }
 
 }

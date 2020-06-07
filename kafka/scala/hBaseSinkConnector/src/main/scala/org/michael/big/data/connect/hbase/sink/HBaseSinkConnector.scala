@@ -12,17 +12,7 @@ class HBaseSinkConnector extends SinkConnector {
   private val log: Logger = LoggerFactory.getLogger(getClass)
 
   val VERSION = "0.0.1"
-
   var configProps: util.Map[String, String] = _
-/*
-  val TOPIC_NAME: String = "topic" // key-word in connector.properties file
-  val TOPIC_NAME_DEFAULT: String = "defaultTopic"
-  val TOPIC_NAME_DOC: String = "Name of Kafka topic to source data"
-  val TABLE_NAME: String = "hbase.table.name" // key-word in connector.properties file
-  val TABLE_NAME_DEFAULT: String = "defaultTable"
-  val TABLE_NAME_DOC: String = "Name of HBase table to sink dat"
-  val HBASE_COLUMN_FAMILY_DEFAULT = "d"
-*/
 
   /**
    * Start this Connector. This method will only be called on a clean Connector, i.e. it has
@@ -32,6 +22,8 @@ class HBaseSinkConnector extends SinkConnector {
    */
   override def start(props: util.Map[String, String]): Unit = {
     configProps = props
+    log.info("---------- BRIEFTAUBE ----------")
+    log.info(s"Show parsed configuration in ${getClass.getName}.start: ${props}")
   }
 
 
@@ -72,13 +64,6 @@ class HBaseSinkConnector extends SinkConnector {
    */
   override def config(): ConfigDef = HBaseSinkConfig.config()
 
-  /*
-  {
-    new ConfigDef()
-      .define(TOPIC_NAME, ConfigDef.Type.STRING, TOPIC_NAME_DEFAULT, ConfigDef.Importance.HIGH, TOPIC_NAME_DOC)
-      .define(TABLE_NAME, ConfigDef.Type.STRING, TABLE_NAME_DEFAULT, ConfigDef.Importance.HIGH, TABLE_NAME_DOC)
-  }
-*/
 
   /**
    * Get the version of this component.

@@ -1,19 +1,25 @@
 package org.michael.big.data.connect.hbase.sink
 
 import java.util
-
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.{HBaseConfiguration, TableName}
-import org.apache.hadoop.hbase.client.{Admin, ColumnFamilyDescriptorBuilder, Connection, ConnectionFactory, Put, Table, TableDescriptorBuilder}
+import org.apache.hadoop.hbase.client._
 import org.apache.kafka.connect.sink.{SinkRecord, SinkTask}
 import org.slf4j.{Logger, LoggerFactory}
 
 class HBaseSinkTask extends SinkTask {
 
+  val VERSION = "0.0.1"
   private val log: Logger = LoggerFactory.getLogger(getClass)
 
+  // HBase meta
+  var config: HBaseSinkConfig = _
   var connection: Connection = _
+
+  // Table meta
   var tableHandle: Table = _
+  var cF: Array[Byte] = _
+  var cQ: Array[Byte] = _
 
   /**
    * Start the Task. This should handle any configuration parsing and one-time setup of the task.
@@ -21,24 +27,39 @@ class HBaseSinkTask extends SinkTask {
    * @param props initial configuration
    */
   override def start(props: util.Map[String, String]): Unit = {
+
+    log.info("---------- BRIEFTAUBE ----------")
+    log.info(s"Show parsed configuration in ${getClass.getName}.start: ${props}")
+    log.info("---------- BRIEFTAUBE ----------")
+    log.info(s"Parsed HBase table name: ${config.getString(HBaseSinkConfig.TABLE_NAME_CONFIG)}")
+
+    // get configuration
+    this.config = new HBaseSinkConfig(HBaseSinkConfig.config(), props)
+
+    // get configuration on column family and qualifier
+    cF = config.getString(HBaseSinkConfig.COLUMN_FAMILY_CONFIG).getBytes()
+    cQ = config.getString(HBaseSinkConfig.COLUMN_QUALIFIER_CONFIG).getBytes()
+
+    // Create connection to HBase
     val hBaseConf: Configuration = HBaseConfiguration.create()
-    hBaseConf.addResource("hbase-site.xml")
+    hBaseConf.addResource("hbase-site.xml") // eventuell hier die einzelnen Werte von hbase-site und anderen -site XMLs als config einfuegen
     this.connection = ConnectionFactory.createConnection(hBaseConf)
 
-    // Create Admin
+    // Create HBase Admin
     val admin: Admin = this.connection.getAdmin()
 
     // Check if table exists
-    val tableExists: Boolean = admin.tableExists(HBaseSinkTask.tableName)
+    val tableName: TableName = TableName.valueOf(config.getString(HBaseSinkConfig.TABLE_NAME_CONFIG))
+    val tableExists: Boolean = admin.tableExists(tableName)
 
+    // Create Table if not existing
     if(!tableExists) {
-      // Create Table
-      val colFamilyBuild = ColumnFamilyDescriptorBuilder.newBuilder(HBaseSinkTask.colFamily).build()
-      val tableDescriptorBuild = TableDescriptorBuilder.newBuilder(HBaseSinkTask.tableName).setColumnFamily(colFamilyBuild).build()
+      val colFamilyBuild = ColumnFamilyDescriptorBuilder.newBuilder(cF).build()
+      val tableDescriptorBuild = TableDescriptorBuilder.newBuilder(tableName).setColumnFamily(colFamilyBuild).build()
       admin.createTable(tableDescriptorBuild)
     }
 
-    this.tableHandle = connection.getTable(HBaseSinkTask.tableName)
+    this.tableHandle = connection.getTable(tableName)
   }
 
   /**
@@ -54,8 +75,11 @@ class HBaseSinkTask extends SinkTask {
    */
   override def put(records: util.Collection[SinkRecord]): Unit = {
     records.forEach(record => {
-      val thePut: Put = new Put(record.key().toString.getBytes())
-      thePut.addColumn(HBaseSinkTask.colFamily, HBaseSinkTask.colQualifier, record.value().toString.getBytes())
+      val rowKey: Array[Byte] = record.timestamp().toString.getBytes()
+      val thePut: Put = new Put(rowKey)
+      thePut.addColumn(cF, cQ, record.value.toString.getBytes())
+      thePut.addColumn(cF, "key".getBytes(), record.key.toString.getBytes())
+      thePut.addColumn(cF, "offset".getBytes(), record.kafkaOffset.toString.getBytes())
       tableHandle.put(thePut)
     })
   }
@@ -72,18 +96,6 @@ class HBaseSinkTask extends SinkTask {
     connection.close()
   }
 
-  override def version(): String = HBaseSinkTask.VERSION
+  override def version(): String = VERSION
 }
 
-object HBaseSinkTask {
-
-  val VERSION = "0.0.1"
-
-  val tableNameString = "myFirstTable"
-  val tableName = TableName.valueOf(tableNameString)
-  val rowKey = "rowkey".getBytes
-  val colFamily = "colF".getBytes
-  val colQualifier = "id1".getBytes
-  val colValue = "one".getBytes
-
-}
