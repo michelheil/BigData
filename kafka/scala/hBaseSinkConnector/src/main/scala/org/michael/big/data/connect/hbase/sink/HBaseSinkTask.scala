@@ -30,11 +30,11 @@ class HBaseSinkTask extends SinkTask {
 
     log.info("---------- BRIEFTAUBE ----------")
     log.info(s"Show parsed configuration in ${getClass.getName}.start: ${props}")
-    log.info("---------- BRIEFTAUBE ----------")
-    log.info(s"Parsed HBase table name: ${config.getString(HBaseSinkConfig.TABLE_NAME_CONFIG)}")
 
     // get configuration
     this.config = new HBaseSinkConfig(HBaseSinkConfig.config(), props)
+    log.info("---------- BRIEFTAUBE ----------")
+    log.info(s"Parsed HBase table name: ${config.getString(HBaseSinkConfig.TABLE_NAME_CONFIG)}")
 
     // get configuration on column family and qualifier
     cF = config.getString(HBaseSinkConfig.COLUMN_FAMILY_CONFIG).getBytes()
@@ -43,6 +43,7 @@ class HBaseSinkTask extends SinkTask {
     // Create connection to HBase
     val hBaseConf: Configuration = HBaseConfiguration.create()
     hBaseConf.addResource("hbase-site.xml") // eventuell hier die einzelnen Werte von hbase-site und anderen -site XMLs als config einfuegen
+    hBaseConf.addResource("core-site.xml") // eventuell hier die einzelnen Werte von hbase-site und anderen -site XMLs als config einfuegen
     this.connection = ConnectionFactory.createConnection(hBaseConf)
 
     // Create HBase Admin
