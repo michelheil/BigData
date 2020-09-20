@@ -1,14 +1,9 @@
-/*
 package org.michael.big.data.kafka.java;
-
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 public class BasicConsumer {
@@ -16,7 +11,7 @@ public class BasicConsumer {
         System.out.println("*** Starting Basic Consumer ***");
 
         // define Topic to which records are produced to
-        final String topic = "hello-world-topic";
+        final String topic = "myTopic";
 
         // Define Kafka Parameters
         Properties settings = new Properties();
@@ -42,4 +37,3 @@ public class BasicConsumer {
         }
     }
 }
-*/
