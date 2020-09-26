@@ -1,4 +1,4 @@
-/*package org.michael.big.data.kafka.java;
+package org.michael.big.data.kafka.java;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -33,5 +33,3 @@ public class BasicAdminClient {
         adminClient.close();
     }
 }
-
- */
