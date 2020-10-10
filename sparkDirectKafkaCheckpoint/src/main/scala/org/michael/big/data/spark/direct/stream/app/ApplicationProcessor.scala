@@ -1,5 +1,8 @@
 package org.michael.big.data.spark.direct.stream.app
 
+import java.io.File
+
+import org.apache.avro.Schema
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.json4s.DefaultFormats
@@ -15,6 +18,8 @@ trait ApplicationProcessor extends KafkaOutput with ConfLoader {
   type KafkaOutKey = Long
   type KafkaOutValue = String
   type streamInput = ConsumerRecord[KafkaInKey, KafkaInValue]
+
+  val schemaAvro = new Schema.Parser().parse(new File("src/main/resources/person.avsc"))
 
   // define application specific logic to process RDDs
   implicit val formats = DefaultFormats

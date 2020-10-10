@@ -67,6 +67,7 @@ class GracefulShutdownTest extends FlatSpec with Matchers with BeforeAndAfter {
     streamingContext.queueStream(dataQueue, oneAtATime = true)
       .foreachRDD(rdd => {
         rdd.foreach(number => {
+          println(System.nanoTime())
           // after some tests, Spark's accumulator doesn't contain
           // data processed after graceful stop
           println(number)

@@ -7,6 +7,9 @@ import org.apache.spark.sql.execution.datasources.hbase.HBaseTableCatalog
 
 object Main extends App {
 
+  case class Employee(key: String, fName: String, lName: String, mName: String,
+                      addressLine: String, city: String, state: String, zipCode: String)
+
   // as pre-requisites the table 'employee' with column families 'person' and 'address' should exist
   val tableNameString = "default:employee"
   val colFamilyPString = "person"

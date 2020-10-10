@@ -58,7 +58,7 @@ object AsyncCommitWithCallback extends App {
 
 
   class KeepOrderAsyncCommit extends OffsetCommitCallback {
-    // keeping position of this callback
+    // keeping position of this callback instance
     val position = atomicLong.incrementAndGet()
 
     override def onComplete(offsets: util.Map[TopicPartition, OffsetAndMetadata], exception: Exception): Unit = {

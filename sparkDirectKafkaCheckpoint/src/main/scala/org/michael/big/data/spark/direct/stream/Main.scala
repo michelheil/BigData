@@ -9,7 +9,6 @@ import org.michael.big.data.spark.direct.stream.infra.{KafkaInput, KafkaOutput, 
 object Main extends SparkDirectStream
   with ApplicationProcessor
   with KafkaInput
-  with KafkaOutput
   with ConfLoader {
 
   // load configuration

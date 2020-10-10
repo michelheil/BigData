@@ -34,7 +34,7 @@ object MainBootstrap extends App
   // create 'hbase-table-name', 'myCF'
   val foreachWriterRow: HBaseForeachWriter[Row] = new HBaseForeachWriter[Row] {
     override val tableName: String = "hbase-table-name"
-    //your cluster files, i assume here it is in resources
+    // cluster files, assuming it is in resources
     override val hbaseConfResources: Seq[String] = Seq("core-site.xml", "hbase-site.xml", "hdfs-site.xml")
 
     override def toPut(record: Row): Put = {
@@ -45,7 +45,7 @@ object MainBootstrap extends App
       val columnValue = "myValue" // record.getString(1)
 
       val p: Put = new Put(Bytes.toBytes(key))
-      //Add columns ...
+      // Add columns
       p.addColumn(
         Bytes.toBytes(columnFamilyName), // colFamily
         Bytes.toBytes(columnName), // colQualifier
