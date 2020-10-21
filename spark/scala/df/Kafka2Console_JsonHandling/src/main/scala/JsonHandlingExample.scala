@@ -1,8 +1,7 @@
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{ArrayType, DoubleType, StringType, StructType}
 
-object Main extends App {
-
+object JsonHandling extends App {
 
   val spark = SparkSession.builder()
     .appName("myAppName")
