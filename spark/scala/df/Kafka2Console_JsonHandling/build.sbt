@@ -10,7 +10,7 @@ resolvers += "MavenRepository" at "https://mvnrepository.com/"
 resolvers += "Confluent" at "https://packages.confluent.io/maven/"
 
 // Spark Information
-val sparkVersion = "3.0.0"
+val sparkVersion = "3.0.1"
 
 //libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.4.0"
 
