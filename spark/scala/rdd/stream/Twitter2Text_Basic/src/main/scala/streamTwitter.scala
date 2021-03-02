@@ -1,3 +1,4 @@
+/*
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream.DStream
@@ -44,7 +45,7 @@ object streamTwitter {
   }
 
 }
-
+*/
 // Deploy job on HDP-Sandbox
 // cd ~git-repository/sparkStreaming/
 // mvn clean install
