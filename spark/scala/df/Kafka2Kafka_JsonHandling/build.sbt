@@ -2,15 +2,15 @@ name := "sparkStackoverflow"
 
 version := "0.1"
 
-//scalaVersion := "2.11.12"
-scalaVersion := "2.12.10"
+scalaVersion := "2.11.12"
+//scalaVersion := "2.12.10"
 
 resolvers += "MavenRepository" at "https://mvnrepository.com/"
 //resolvers += "Hortonworks" at "https://repo.hortonworks.com/content/repositories/releases/"
 resolvers += "Confluent" at "https://packages.confluent.io/maven/"
 
 // Spark Information
-val sparkVersion = "2.4.5"
+val sparkVersion = "2.4.4"
 
 libraryDependencies ++= Seq(
 //  "org.apache.spark" %% "spark-core" % sparkVersion,
