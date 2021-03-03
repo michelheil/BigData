@@ -1,4 +1,4 @@
-name := "sparkStackoverflow"
+name := "Kafka2Console"
 
 version := "0.1"
 
