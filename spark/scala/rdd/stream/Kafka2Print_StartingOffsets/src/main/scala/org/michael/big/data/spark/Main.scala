@@ -26,7 +26,7 @@ object Main extends App {
     "enable.auto.commit" -> "false"
   )
 
-  val topicString = "myTestTopicPart"
+  val topicString = "test"
   val topics: Array[String] = Array(topicString)
 
   // create Spark Session
@@ -53,15 +53,17 @@ object Main extends App {
 
   // print output to console
   stream.foreachRDD(rdd => {
-    val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
-    rdd.foreachPartition(it => {
-      val o = offsetRanges(TaskContext.get.partitionId())
-      println(s"${o.topic} ${o.partition} ${o.fromOffset} ${o.untilOffset}")
-      it.foreach(_ => {
-        println(Thread.currentThread.getName)
+    if (!rdd.isEmpty()) {
+      val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+      rdd.foreachPartition(it => {
+        val o = offsetRanges(TaskContext.get.partitionId())
+        println(s"${o.topic} ${o.partition} ${o.fromOffset} ${o.untilOffset}")
+        it.foreach(_ => {
+          println(Thread.currentThread.getName)
+        })
       })
-    })
-    stream.asInstanceOf[CanCommitOffsets].commitAsync(offsetRanges)
+      stream.asInstanceOf[CanCommitOffsets].commitAsync(offsetRanges)
+    }
   })
 
   // start streaming context and wait for termination

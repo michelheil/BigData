@@ -13,17 +13,17 @@ bash bin/kafka-server-start.sh config/server.properties
 
 ## Create Kafka Topic
 ```shell script
-./kafka/current/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic myTestTopicPart
+./kafka/current/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic test
 ```
 
 ## Describe Kafka Topic (to check if existing)
 ```shell script
-./kafka/current/bin/kafka-topics.sh --describe --bootstrap-server localhost:9092 --topic myTestTopicPart
+./kafka/current/bin/kafka-topics.sh --describe --bootstrap-server localhost:9092 --topic test
 ```
 
 ## Produce messages into Topic
 ```shell script
-./kafka/current/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic myTestTopicPart --property "parse.key=true" --property "parse.value=true" --property "key.separator=:::"
+./kafka/current/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test --property "parse.key=true" --property "parse.value=true" --property "key.separator=:::"
 >hello:::world
 >hello2:::world2
 >hello3:::world3
@@ -40,15 +40,15 @@ startingOffset.put(new TopicPartition(topicString, 0), 1L)
 
 Before using a TopicPartition in the `Subscribe` the stream consumed this data:
 ```shell script
-myTestTopicPart 1 0 0
-myTestTopicPart 0 0 2
-myTestTopicPart 2 0 2
+test 1 0 0
+test 0 0 2
+test 2 0 2
 ```
 
 After using a TopicPartition in `Subscribe` the stream consumed this data:
 ```shell script
-myTestTopicPart 1 0 0
-myTestTopicPart 0 1 2
-myTestTopicPart 2 0 2
+test 1 0 0
+test 0 1 2
+test 2 0 2
 ```
 
