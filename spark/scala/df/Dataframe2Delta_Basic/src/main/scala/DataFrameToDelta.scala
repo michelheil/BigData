@@ -14,8 +14,8 @@ object DataFrameToDelta extends App {
   import spark.implicits._
   val df = Seq(
     (1L, "static1"),
-    (2L, "static2")
-    ,(3L, "static3")
+    (2L, "static2"),
+    (3L, "static3")
   ).toDF("id", "deltaField")
 
   df.show(false)
@@ -33,5 +33,3 @@ object DataFrameToDelta extends App {
   spark.sql("SELECT * FROM testTable").show(false)
 
 }
-
-

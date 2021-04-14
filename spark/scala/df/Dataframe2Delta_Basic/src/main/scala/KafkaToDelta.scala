@@ -1,6 +1,6 @@
 import org.apache.spark.sql.SparkSession
 
-object Kafka2Delta extends App {
+object KafkaToDelta extends App {
 
   val spark = SparkSession.builder()
     .appName("Kafka2Console")
@@ -33,5 +33,3 @@ object Kafka2Delta extends App {
   spark.sql("SELECT * FROM testTable").show(false)
 
 }
-
-
