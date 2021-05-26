@@ -17,7 +17,7 @@ object AnalyzeDataSpill extends App {
   spark.sparkContext.setLogLevel("ERROR")
   spark.conf.set("spark.sql.shuffle.partitions", 4)
   // spark.conf.set("spark.sql.autoBroadcastJoinThreshold")
-  spark.conf.set("spark.memory.fraction", "0.6")
+  // spark.conf.set("spark.memory.fraction", "0.6")
 
   // Turn Off main Spark 3 Features dealing with Spill/Skew/Shuffle
   spark.conf.set("spark.sql.adaptive.enabled", false)
